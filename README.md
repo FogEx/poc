@@ -9,4 +9,4 @@ Prova de conceito de meu projeto de trabalho de conclusão de curso da graduaç�
 
 ## 📄 Licença
 
-* [MIT](/LICENSE.txt)
+- [MIT](/LICENSE)
