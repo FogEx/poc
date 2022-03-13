@@ -27,6 +27,12 @@ config :logger, :console,
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
 
+config :fogex, event_stores: [FogEx.EventStore]
+
+config :fogex,
+  mqtt_host: System.get_env("MQTT_HOST") || "localhost",
+  mqtt_port: String.to_integer(System.get_env("MQTT_PORT") || "1883")
+
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{Mix.env()}.exs"

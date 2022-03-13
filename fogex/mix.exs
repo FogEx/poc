@@ -41,8 +41,13 @@ defmodule FogEx.MixProject do
       {:telemetry_metrics, "~> 0.4"},
       {:telemetry_poller, "~> 0.4"},
       {:gettext, "~> 0.11"},
-      {:jason, "~> 1.0"},
-      {:plug_cowboy, "~> 2.0"}
+      {:jason, "~> 1.2"},
+      {:plug_cowboy, "~> 2.0"},
+      {:eventstore,
+       github: "commanded/eventstore", branch: "master", runtime: Mix.env() != :test},
+      {:elixir_uuid, "~> 1.2"},
+      {:mqtt_potion, github: "brianmay/mqtt_potion", branch: "master"},
+      {:poison, "~> 5.0"}
     ]
   end
 
@@ -54,10 +59,12 @@ defmodule FogEx.MixProject do
   # See the documentation for `Mix` for more info on aliases.
   defp aliases do
     [
-      setup: ["deps.get", "ecto.setup"],
+      setup: ["deps.get", "event_store.setup", "ecto.setup"],
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
-      test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"]
+      test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"],
+      "event_store.setup": ["event_store.create", "event_store.init"],
+      "event_store.reset": ["event_store.drop", "event_store.create", "event_store.init"]
     ]
   end
 end

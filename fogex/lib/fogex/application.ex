@@ -14,14 +14,20 @@ defmodule FogEx.Application do
       # Start the PubSub system
       {Phoenix.PubSub, name: FogEx.PubSub},
       # Start the Endpoint (http/https)
-      FogExWeb.Endpoint
+      FogExWeb.Endpoint,
       # Start a worker by calling: FogEx.Worker.start_link(arg)
       # {FogEx.Worker, arg}
+
+      FogEx.EventStore,
+      FogEx.Connector.Supervisor,
+      FogEx.DataProcessor.Supervisor,
+      FogEx.Notificator.Supervisor
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
     opts = [strategy: :one_for_one, name: FogEx.Supervisor]
+
     Supervisor.start_link(children, opts)
   end
 
