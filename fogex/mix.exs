@@ -43,6 +43,7 @@ defmodule FogEx.MixProject do
       {:gettext, "~> 0.11"},
       {:jason, "~> 1.2"},
       {:plug_cowboy, "~> 2.0"},
+      {:credo, "~> 1.5", only: [:dev, :test], runtime: false},
       {:eventstore,
        github: "commanded/eventstore", branch: "master", runtime: Mix.env() != :test},
       {:elixir_uuid, "~> 1.2"},

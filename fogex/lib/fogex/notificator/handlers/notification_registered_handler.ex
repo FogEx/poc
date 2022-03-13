@@ -2,7 +2,7 @@ defmodule FogEx.Notificator.NotificationRegisteredHandler do
   use GenServer
 
   alias FogEx.EventStore
-  alias FogEx.Events.{NotificationEvent}
+  # alias FogEx.Events.{NotificationEvent}
 
   def start_link(initial_args) do
     GenServer.start_link(__MODULE__, initial_args)
@@ -32,13 +32,12 @@ defmodule FogEx.Notificator.NotificationRegisteredHandler do
   def handle_info({:events, [event]}, state) do
     %{subscription: subscription} = state
 
-    %NotificationEvent{
-      type: type,
-      message: message,
-      origin_event: origin_event
-    } = event.data
-
-    IO.inspect(event.data)
+    # TO-DO: handle notification event
+    # %NotificationEvent{
+    #   type: type,
+    #   message: message,
+    #   origin_event: origin_event
+    # } = event.data
 
     # Confirm receipt of received events
     :ok = EventStore.ack(subscription, [event])
