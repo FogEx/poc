@@ -39,4 +39,5 @@ Aplicação Phoenix que irá conter todas as regras do FogEx.
 
 ## 📌 Referências
 
-TO-DO
+- [Replacing GenEvent by a Supervisor + GenServer](http://blog.plataformatec.com.br/2016/11/replacing-genevent-by-a-supervisor-genserver/)
+- 
