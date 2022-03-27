@@ -5,6 +5,8 @@ defmodule FogEx.MQTTHandler do
   alias FogEx.Events.VitalSignEvent
   alias FogEx.EventStore
 
+  require Logger
+
   def start_link(init_args) do
     GenServer.start_link(__MODULE__, init_args, name: __MODULE__)
   end
@@ -18,28 +20,23 @@ defmodule FogEx.MQTTHandler do
 
   @impl true
   def handle_cast({:mqtt, :connect}, state) do
-    IO.puts("Got connect")
+    Logger.debug("Got connect")
+
     {:noreply, state}
   end
 
   @impl true
   def handle_cast({:mqtt, :disconnect}, state) do
-    IO.puts("Got disconnect")
+    Logger.debug("Got disconnect")
+
     {:noreply, state}
   end
 
   @impl true
   def handle_cast({:mqtt, :publish, "vital_signs/" <> user_id = topic, message}, state) do
-    IO.puts("Got message #{inspect(message)} from topic #{inspect(topic)}")
+    Logger.debug("Got message #{inspect(message)} from topic #{inspect(topic)}")
 
     {:ok, vital_sign} = Poison.decode(message, as: %VitalSignEvent{}, keys: :atoms)
-
-    # events = [
-    #   %EventData{
-    #     event_type: "Elixir.FogEx.VitalSignEvent",
-    #     data: vital_sign
-    #   }
-    # ]
 
     event_name = vital_sign.type <> "_registered"
 
@@ -50,7 +47,8 @@ defmodule FogEx.MQTTHandler do
 
   @impl true
   def handle_cast({:mqtt, :publish, topic, message}, state) do
-    IO.puts("Unhandled message #{inspect(message)} from topic #{inspect(topic)}")
+    Logger.debug("Unhandled message #{inspect(message)} from topic #{inspect(topic)}")
+
     {:noreply, state}
   end
 end

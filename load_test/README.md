@@ -31,7 +31,7 @@ yarn run build
 
 - Executando
 
-  - Apenas uma única vez
+  - Apenas uma vez
 
   ```powershell
   # com executável local do k6
@@ -41,7 +41,7 @@ yarn run build
   docker run -v ${pwd}/build:/build k6 run /build/app.bundle.js
   ```
 
-  - Multiplas VUs (`virtual users`) e durante um intervalo de tempo (`duration`)
+  - Múltiplos VUs (`virtual users`) e durante um intervalo de tempo (`duration`)
 
   ```powershell
   ./k6 run --vus 10 --duration 30s build/app.bundle.js

@@ -9,8 +9,27 @@ Aplicação Phoenix que irá conter todas as regras do FogEx.
 
 ## 💬 Utilização
 
+Executando o servidor Phoenix:
+
 - Execute o servidor Phoenix com `mix phx.server`;
 - Após a execução, acesse o endereço `http://localhost:4000` através do seu navegador.
+
+Executando através do IEx:
+
+```powershell
+iex.bat -S mix
+```
+
+Executando com uma configuração diferente (produção):
+
+```powershell
+# Definindo as variáveis de ambiente
+$env:SECRET_KEY_BASE="$(mix phx.gen.secret)"
+$env:DATABASE_URL="postgresql://postgres:postgres@localhost:5432/rockelivery"
+$env:EVENT_STORE_URL="postgresql://postgres:postgres@localhost:5432/eventstore"
+
+iex.bat -S mix
+```
 
 ## 💾 Banco de dados
 
@@ -46,3 +65,9 @@ Aplicação Phoenix que irá conter todas as regras do FogEx.
   - Telemetry
     - [telemetry_poller](https://github.com/beam-telemetry/telemetry_poller)
     - [telemetry_metrics](https://github.com/beam-telemetry/telemetry_metrics)
+
+```powershell
+$env:SECRET_KEY_BASE="$(mix phx.gen.secret)"
+$env:DATABASE_URL="postgresql://postgres:postgres@localhost:5432/rockelivery"
+$env:EVENT_STORE_URL="postgresql://postgres:postgres@localhost:5432/eventstore"
+```

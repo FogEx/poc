@@ -9,18 +9,25 @@ defmodule FogEx.Notificator.Supervisor do
 
   @impl true
   def init(_init_args) do
-    notification_registered_handler_opts = %{
+    num_handlers = 10
+
+    handler_opts = %{
       stream_uuid: "notification_registered",
       subscription_name: "notification_registered_handler",
-      concurrency_limit: 1
+      concurrency_limit: num_handlers
     }
 
-    children = [
-      Supervisor.child_spec({NotificationRegisteredHandler, notification_registered_handler_opts},
-        id: :notification_registered_handler_1
-      )
-    ]
+    children =
+      1..num_handlers
+      |> Enum.map(&create_handler_child_spec(&1, handler_opts))
 
     Supervisor.init(children, strategy: :one_for_one)
+  end
+
+  defp create_handler_child_spec(handler_number, handler_opts) do
+    Supervisor.child_spec(
+      {NotificationRegisteredHandler, handler_opts},
+      id: String.to_atom("notification_registered_handler_#{handler_number}")
+    )
   end
 end
