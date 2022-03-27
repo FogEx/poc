@@ -6,6 +6,7 @@ Prova de conceito de meu projeto de trabalho de conclusão de curso da graduaç�
 
 - [MQTT Broker](mqtt_broker/README.md)
 - [FogEx](fogex/README.md)
+- [Teste de carga](load_test/README.md)
 
 ## 📄 Licença
 

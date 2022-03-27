@@ -61,3 +61,6 @@ docker build -t k6 .
 ## 📌 Referências
 
 - [K6 Template ES6](https://github.com/grafana/k6-template-es6)
+- Observabilidade no Elixir
+  - [A tour of Elixir performance & monitoring tools](https://hackernoon.com/a-tour-of-elixir-performance-monitoring-tools-aac2df726e8c)
+  - [Getting Started: Debugging](https://elixir-lang.org/getting-started/debugging.html)

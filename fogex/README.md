@@ -40,4 +40,9 @@ Aplicação Phoenix que irá conter todas as regras do FogEx.
 ## 📌 Referências
 
 - [Replacing GenEvent by a Supervisor + GenServer](http://blog.plataformatec.com.br/2016/11/replacing-genevent-by-a-supervisor-genserver/)
-- 
+- Bibliotecas utilizadas
+  - [EventStore](https://github.com/commanded/eventstore)
+  - [MQTTPotion](https://github.com/brianmay/mqtt_potion)
+  - Telemetry
+    - [telemetry_poller](https://github.com/beam-telemetry/telemetry_poller)
+    - [telemetry_metrics](https://github.com/beam-telemetry/telemetry_metrics)
