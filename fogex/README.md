@@ -59,15 +59,12 @@ iex.bat -S mix
 ## 📌 Referências
 
 - [Replacing GenEvent by a Supervisor + GenServer](http://blog.plataformatec.com.br/2016/11/replacing-genevent-by-a-supervisor-genserver/)
+- [Three real-world examples of distributed Elixir](https://bigardone.dev/blog/2021/05/22/three-real-world-examples-of-distributed-elixir-pt-1)
 - Bibliotecas utilizadas
   - [EventStore](https://github.com/commanded/eventstore)
   - [MQTTPotion](https://github.com/brianmay/mqtt_potion)
   - Telemetry
     - [telemetry_poller](https://github.com/beam-telemetry/telemetry_poller)
     - [telemetry_metrics](https://github.com/beam-telemetry/telemetry_metrics)
-
-```powershell
-$env:SECRET_KEY_BASE="$(mix phx.gen.secret)"
-$env:DATABASE_URL="postgresql://postgres:postgres@localhost:5432/rockelivery"
-$env:EVENT_STORE_URL="postgresql://postgres:postgres@localhost:5432/eventstore"
-```
+  - [libcluster](https://github.com/bitwalker/libcluster)
+  - [swarm](https://github.com/bitwalker/swarm)

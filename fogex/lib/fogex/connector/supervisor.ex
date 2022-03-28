@@ -1,34 +1,45 @@
 defmodule FogEx.Connector.Supervisor do
-  use Supervisor
+  use DynamicSupervisor
 
-  def start_link(init_arg) do
-    Supervisor.start_link(__MODULE__, init_arg, name: __MODULE__)
+  alias FogEx.Connector.MQTT.Supervisor, as: MQTTSupervisor
+
+  require Logger
+
+  def start_link(state) do
+    DynamicSupervisor.start_link(__MODULE__, state, name: __MODULE__)
   end
 
   @impl true
-  def init(_init_args) do
-    mqtt_host = Application.get_env(:fogex, :mqtt_host)
-    mqtt_port = Application.get_env(:fogex, :mqtt_port)
+  def init(_) do
+    DynamicSupervisor.init(strategy: :one_for_one)
+  end
 
-    mqtt_opts = [
-      name: MqttPotion.Connection,
-      host: mqtt_host,
-      port: mqtt_port,
-      ssl: false,
-      protocol_version: 5,
-      client_id: "connector_mqtt_client",
-      ssl_opts: [],
-      handler_pid: FogEx.MQTTHandler,
-      subscriptions: [
-        {"vital_signs/#", 0}
-      ]
-    ]
+  def start_child(opts) do
+    child_spec = %{
+      id: MQTTSupervisor,
+      start: {MQTTSupervisor, :start_link, [opts]},
+      restart: :temporary
+    }
 
-    children = [
-      {MqttPotion.Connection, mqtt_opts},
-      FogEx.MQTTHandler
-    ]
+    DynamicSupervisor.start_child(__MODULE__, child_spec)
+  end
 
-    Supervisor.init(children, strategy: :one_for_one)
+  # Swarm callbacks
+  def handle_call({:swarm, :begin_handoff}, _from, state) do
+    Logger.debug("Begin handoff of module #{inspect(__MODULE__)} on #{node()}")
+
+    {:reply, :restart, state}
+  end
+
+  def handle_cast({:swarm, :resolve_conflict, _}, state) do
+    Logger.debug("Resolving conflict of module #{inspect(__MODULE__)} on #{node()}")
+
+    {:noreply, state}
+  end
+
+  def handle_info({:swarm, :die}, state) do
+    Logger.debug("Death of module #{inspect(__MODULE__)} on #{node()}")
+
+    {:stop, :shutdown, state}
   end
 end

@@ -1,4 +1,4 @@
-defmodule FogEx.MQTTHandler do
+defmodule FogEx.Connector.MQTT.Handler do
   use GenServer
 
   alias EventStore.EventData
@@ -7,15 +7,15 @@ defmodule FogEx.MQTTHandler do
 
   require Logger
 
-  def start_link(init_args) do
-    GenServer.start_link(__MODULE__, init_args, name: __MODULE__)
+  @impl true
+  def start_link(opts) do
+    GenServer.start_link(__MODULE__, opts, name: __MODULE__)
   end
 
   # Callbacks
-
   @impl true
-  def init(init_arg) do
-    {:ok, init_arg}
+  def init(opts) do
+    {:ok, opts}
   end
 
   @impl true

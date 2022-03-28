@@ -1,4 +1,4 @@
-defmodule FogEx.DataProcessor.BodyTemperatureRegisteredHandler do
+defmodule FogEx.DataProcessor.BodyTemperatureRegistered.Handler do
   use GenServer
 
   alias FogEx.EventStore
@@ -10,7 +10,6 @@ defmodule FogEx.DataProcessor.BodyTemperatureRegisteredHandler do
   end
 
   # Callbacks
-
   @impl true
   def init(%{
         stream_uuid: stream_uuid,

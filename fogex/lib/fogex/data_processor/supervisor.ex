@@ -1,33 +1,46 @@
 defmodule FogEx.DataProcessor.Supervisor do
-  use Supervisor
+  use DynamicSupervisor
 
-  alias FogEx.DataProcessor.BodyTemperatureRegisteredHandler
+  alias FogEx.DataProcessor.BodyTemperatureRegistered.Supervisor,
+    as: BodyTemperatureRegisteredSupervisor
 
-  def start_link(init_arg) do
-    Supervisor.start_link(__MODULE__, init_arg, name: __MODULE__)
+  require Logger
+
+  def start_link(state) do
+    DynamicSupervisor.start_link(__MODULE__, state, name: __MODULE__)
   end
 
   @impl true
-  def init(_init_args) do
-    num_handlers = 10
-
-    handler_opts = %{
-      stream_uuid: "body_temperature_registered",
-      subscription_name: "body_temperature_registered_handler",
-      concurrency_limit: num_handlers
-    }
-
-    children =
-      1..num_handlers
-      |> Enum.map(&create_handler_child_spec(&1, handler_opts))
-
-    Supervisor.init(children, strategy: :one_for_one)
+  def init(_) do
+    DynamicSupervisor.init(strategy: :one_for_one)
   end
 
-  defp create_handler_child_spec(handler_number, handler_opts) do
-    Supervisor.child_spec(
-      {BodyTemperatureRegisteredHandler, handler_opts},
-      id: String.to_atom("body_temperature_registered_handler_#{handler_number}")
-    )
+  def start_child(opts) do
+    child_spec = %{
+      id: BodyTemperatureRegisteredSupervisor,
+      start: {BodyTemperatureRegisteredSupervisor, :start_link, [opts]},
+      restart: :temporary
+    }
+
+    DynamicSupervisor.start_child(__MODULE__, child_spec)
+  end
+
+  # Swarm callbacks
+  def handle_call({:swarm, :begin_handoff}, _from, state) do
+    Logger.debug("Begin handoff of module #{inspect(__MODULE__)} on #{node()}")
+
+    {:reply, :restart, state}
+  end
+
+  def handle_cast({:swarm, :resolve_conflict, _}, state) do
+    Logger.debug("Resolving conflict of module #{inspect(__MODULE__)} on #{node()}")
+
+    {:noreply, state}
+  end
+
+  def handle_info({:swarm, :die}, state) do
+    Logger.debug("Death of module #{inspect(__MODULE__)} on #{node()}")
+
+    {:stop, :shutdown, state}
   end
 end

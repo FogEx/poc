@@ -1,33 +1,46 @@
 defmodule FogEx.Notificator.Supervisor do
-  use Supervisor
+  use DynamicSupervisor
 
-  alias FogEx.Notificator.NotificationRegisteredHandler
+  alias FogEx.Notificator.NotificationRegistered.Supervisor,
+    as: NotificationRegisteredSupervisor
 
-  def start_link(init_arg) do
-    Supervisor.start_link(__MODULE__, init_arg, name: __MODULE__)
+  require Logger
+
+  def start_link(state) do
+    DynamicSupervisor.start_link(__MODULE__, state, name: __MODULE__)
   end
 
   @impl true
-  def init(_init_args) do
-    num_handlers = 10
-
-    handler_opts = %{
-      stream_uuid: "notification_registered",
-      subscription_name: "notification_registered_handler",
-      concurrency_limit: num_handlers
-    }
-
-    children =
-      1..num_handlers
-      |> Enum.map(&create_handler_child_spec(&1, handler_opts))
-
-    Supervisor.init(children, strategy: :one_for_one)
+  def init(_) do
+    DynamicSupervisor.init(strategy: :one_for_one)
   end
 
-  defp create_handler_child_spec(handler_number, handler_opts) do
-    Supervisor.child_spec(
-      {NotificationRegisteredHandler, handler_opts},
-      id: String.to_atom("notification_registered_handler_#{handler_number}")
-    )
+  def start_child(opts) do
+    child_spec = %{
+      id: NotificationRegisteredSupervisor,
+      start: {NotificationRegisteredSupervisor, :start_link, [opts]},
+      restart: :temporary
+    }
+
+    DynamicSupervisor.start_child(__MODULE__, child_spec)
+  end
+
+  # Swarm callbacks
+  def handle_call({:swarm, :begin_handoff}, _from, state) do
+    Logger.debug("Begin handoff of module #{inspect(__MODULE__)} on #{node()}")
+
+    {:reply, :restart, state}
+  end
+
+  def handle_cast({:swarm, :resolve_conflict, _}, state) do
+    Logger.debug("Resolving conflict of module #{inspect(__MODULE__)} on #{node()}")
+
+    {:noreply, state}
+  end
+
+  def handle_info({:swarm, :die}, state) do
+    Logger.debug("Death of module #{inspect(__MODULE__)} on #{node()}")
+
+    {:stop, :shutdown, state}
   end
 end

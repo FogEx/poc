@@ -1,4 +1,4 @@
-defmodule FogEx.Notificator.NotificationRegisteredHandler do
+defmodule FogEx.Notificator.NotificationRegistered.Handler do
   use GenServer
 
   alias FogEx.EventStore
@@ -9,7 +9,6 @@ defmodule FogEx.Notificator.NotificationRegisteredHandler do
   end
 
   # Callbacks
-
   @impl true
   def init(%{
         stream_uuid: stream_uuid,
