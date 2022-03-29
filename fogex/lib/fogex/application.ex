@@ -57,11 +57,11 @@ defmodule FogEx.Application do
     [
       fogex: [
         # Node discovery by UTP multicast
-        strategy: Cluster.Strategy.Gossip
+        # strategy: Cluster.Strategy.Gossip
 
         # Static nodes
-        # strategy: Cluster.Strategy.Epmd,
-        # config: [hosts: [:"node1@CASSIO-NOTE", :"node2@CASSIO-NOTE"]]
+        strategy: Cluster.Strategy.Epmd,
+        config: [hosts: [:"node1@CASSIO-NOTE", :"node2@CASSIO-NOTE"]]
       ]
     ]
   end

@@ -1,0 +1,17 @@
+version: "3.9"
+
+services:
+  mqtt_broker:
+    image: eclipse-mosquitto:2.0.14
+    ports:
+      - 1883:1883
+      - 9001:9001
+    volumes:
+      - ./mqtt_broker/config/:/mosquitto/config/
+
+  db:
+    image: postgres:13.6
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_PASSWORD=postgres
