@@ -1,5 +1,7 @@
 # Testes de carga
 
+Teste de carga desenvolvido utilizando o framework K6 que irá ser utilizado para validação dessa POC.
+
 ## 🔧 Setup
 
 - Instalar [Go](https://go.dev/doc/install) e [Git](https://git-scm.com)

@@ -1,6 +1,6 @@
 # FogEx
 
-Aplicação Phoenix que irá conter todas as regras do FogEx.
+Aplicação desenvolvida em Elixir que irá conter todas as regras do FogEx.
 
 ## 🔧 Setup
 
@@ -25,7 +25,7 @@ Executando com uma configuração diferente (produção):
 ```powershell
 # Definindo as variáveis de ambiente
 $env:SECRET_KEY_BASE="$(mix phx.gen.secret)"
-$env:DATABASE_URL="postgresql://postgres:postgres@localhost:5432/rockelivery"
+$env:DATABASE_URL="postgresql://postgres:postgres@localhost:5432/fogex_dev"
 $env:EVENT_STORE_URL="postgresql://postgres:postgres@localhost:5432/eventstore"
 
 iex.bat -S mix
@@ -60,6 +60,7 @@ iex.bat -S mix
 
 - [Replacing GenEvent by a Supervisor + GenServer](http://blog.plataformatec.com.br/2016/11/replacing-genevent-by-a-supervisor-genserver/)
 - [Three real-world examples of distributed Elixir](https://bigardone.dev/blog/2021/05/22/three-real-world-examples-of-distributed-elixir-pt-1)
+- [Elixir School: Poolboy](https://elixirschool.com/en/lessons/misc/poolboy)
 - Bibliotecas utilizadas
   - [EventStore](https://github.com/commanded/eventstore)
   - [MQTTPotion](https://github.com/brianmay/mqtt_potion)
