@@ -31,6 +31,25 @@ $env:EVENT_STORE_URL="postgresql://postgres:postgres@localhost:5432/eventstore"
 iex.bat -S mix
 ```
 
+## 🐋 Docker
+
+- Buildando a imagem:
+
+```powershell
+docker build -t fogex .
+```
+
+- Executando:
+
+```powershell
+$env:SECRET_KEY_BASE="$(mix phx.gen.secret)"
+$env:DATABASE_URL="postgresql://postgres:postgres@localhost:5432/fogex_dev"
+$env:EVENT_STORE_URL="postgresql://postgres:postgres@localhost:5432/eventstore"
+$env:MQTT_HOST="mqtt_broker"
+
+docker run --rm -it -e "DATABASE_URL=$env:DATABASE_URL" -e "EVENT_STORE_URL=$env:EVENT_STORE_URL" -e "SECRET_KEY_BASE=$env:SECRET_KEY_BASE" -e "MQTT_HOST=$env:MQTT_HOST" fogex
+```
+
 ## 💾 Banco de dados
 
 - Para executar o container do PostgreSQL, execute:

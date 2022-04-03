@@ -31,12 +31,9 @@ defmodule FogExWeb.ChannelCase do
   end
 
   setup tags do
-    :ok = Sandbox.checkout(FogEx.Repo)
+    pid = Sandbox.start_owner!(FogEx.Repo, shared: not tags[:async])
 
-    unless tags[:async] do
-      Sandbox.mode(FogEx.Repo, {:shared, self()})
-    end
-
+    on_exit(fn -> Sandbox.stop_owner(pid) end)
     :ok
   end
 end

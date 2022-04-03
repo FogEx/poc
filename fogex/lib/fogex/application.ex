@@ -1,9 +1,9 @@
 defmodule FogEx.Application do
+  # See https://hexdocs.pm/elixir/Application.html
+  # for more information on OTP Applications
   @moduledoc false
 
   use Application
-
-  require Logger
 
   @impl true
   def start(_type, _args) do
@@ -40,8 +40,9 @@ defmodule FogEx.Application do
       FogEx.Notificator.Starter
     ]
 
-    opts = [strategy: :one_for_one, name: __MODULE__]
-
+    # See https://hexdocs.pm/elixir/Supervisor.html
+    # for other strategies and supported options
+    opts = [strategy: :one_for_one, name: FogEx.Supervisor]
     Supervisor.start_link(children, opts)
   end
 
@@ -57,11 +58,11 @@ defmodule FogEx.Application do
     [
       fogex: [
         # Node discovery by UTP multicast
-        # strategy: Cluster.Strategy.Gossip
+        strategy: Cluster.Strategy.Gossip
 
         # Static nodes
-        strategy: Cluster.Strategy.Epmd,
-        config: [hosts: [:"node1@CASSIO-NOTE", :"node2@CASSIO-NOTE"]]
+        # strategy: Cluster.Strategy.Epmd,
+        # config: [hosts: [:"node1@CASSIO-NOTE", :"node2@CASSIO-NOTE"]]
       ]
     ]
   end

@@ -1,4 +1,4 @@
-use Mix.Config
+import Config
 
 # Configure your database
 config :fogex, FogEx.Repo,
@@ -9,17 +9,27 @@ config :fogex, FogEx.Repo,
   show_sensitive_data_on_connection_error: true,
   pool_size: 10
 
+config :fogex, FogEx.EventStore,
+  serializer: EventStore.JsonSerializer,
+  username: "postgres",
+  password: "postgres",
+  database: "eventstore",
+  hostname: "localhost"
+
 # For development, we disable any cache and enable
 # debugging and code reloading.
 #
 # The watchers configuration can be used to run external
 # watchers to your application. For example, we use it
-# with webpack to recompile .js and .css sources.
+# with esbuild to bundle .js and .css sources.
 config :fogex, FogExWeb.Endpoint,
-  http: [port: 4000],
+  # Binding to loopback ipv4 address prevents access from other machines.
+  # Change to `ip: {0, 0, 0, 0}` to allow access from other machines.
+  http: [ip: {127, 0, 0, 1}, port: 4000],
   debug_errors: true,
   code_reloader: true,
   check_origin: false,
+  secret_key_base: "eRv/t57NqHmLvLgh1mQRFmPethYUYVF8qbYcaiEGfs+63FI+mwLc9GeCcvmhkA6P",
   watchers: []
 
 # ## SSL Support
@@ -55,10 +65,3 @@ config :phoenix, :stacktrace_depth, 20
 
 # Initialize plugs at runtime for faster development compilation
 config :phoenix, :plug_init_mode, :runtime
-
-config :fogex, FogEx.EventStore,
-  serializer: EventStore.JsonSerializer,
-  username: "postgres",
-  password: "postgres",
-  database: "eventstore",
-  hostname: "localhost"

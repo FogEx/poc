@@ -7,6 +7,8 @@ defmodule FogExWeb.Router do
 
   scope "/api", FogExWeb do
     pipe_through :api
+
+    get "/health", HealthController, :index
   end
 
   # Enables LiveDashboard only for development
@@ -21,6 +23,7 @@ defmodule FogExWeb.Router do
 
     scope "/" do
       pipe_through [:fetch_session, :protect_from_forgery]
+
       live_dashboard "/dashboard", metrics: FogExWeb.Telemetry
     end
   end

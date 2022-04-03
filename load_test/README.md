@@ -40,16 +40,22 @@ yarn run build
   ./k6 run build/app.bundle.js
 
   # utilizando Docker (necessário buildar a imagem)
-  docker run -v ${pwd}/build:/build k6 run /build/app.bundle.js
+  docker run --rm -v ${pwd}/build:/build k6 run /build/app.bundle.js
+
+  # utlizando Docker Compose
+  docker-compose run --rm -v ${pwd}/build:/build load_test run /build/app.bundle.js
   ```
 
   - Múltiplos VUs (`virtual users`) e durante um intervalo de tempo (`duration`)
 
   ```powershell
-  ./k6 run --vus 10 --duration 30s build/app.bundle.js
+  ./k6 run --vus 10 --duration 30s --iterations 10000 build/app.bundle.js
 
   # ou
-   docker run -v ${pwd}/build:/build k6 run --vus 10 --duration 30s /build/app.bundle.js
+   docker run --rm -v ${pwd}/build:/build k6 run --vus 10 --duration 30s --iterations 10000 /build/app.bundle.js
+
+  # ou
+  docker-compose run --rm -v ${pwd}/build:/build load_test run --vus 10 --duration 30s --iterations 10000 /build/app.bundle.js
   ```
 
 ## 🐋 Docker

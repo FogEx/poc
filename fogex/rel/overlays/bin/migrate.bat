@@ -1,0 +1,1 @@
+call "%~dp0\fogex" eval FogEx.Release.migrate

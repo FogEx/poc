@@ -1,6 +1,46 @@
 version: "3.9"
 
 services:
+  app_1:
+    build:
+      context: ./fogex
+    environment:
+      - DATABASE_URL
+      - EVENT_STORE_URL
+      - SECRET_KEY_BASE
+      - MQTT_HOST=mqtt_broker
+      - MQTT_PORT=1883
+      - PHX_HOST=0.0.0.0
+      - PHX_PORT=4000
+      - PHX_SERVER=true
+      - RELEASE_NAME=fogex
+    image: fogex
+    depends_on:
+      - mqtt_broker
+      - db
+    ports:
+      - 4001:4000
+
+  app_2:
+    build:
+      context: ./fogex
+    environment:
+      - DATABASE_URL
+      - EVENT_STORE_URL
+      - SECRET_KEY_BASE
+      - MQTT_HOST=mqtt_broker
+      - MQTT_PORT=1883
+      - PHX_HOST=0.0.0.0
+      - PHX_PORT=4000
+      - PHX_SERVER=true
+      - RELEASE_NAME=fogex
+    image: fogex
+    depends_on:
+      - mqtt_broker
+      - db
+    ports:
+      - 4002:4000
+
   mqtt_broker:
     image: eclipse-mosquitto:2.0.14
     ports:
@@ -15,3 +55,10 @@ services:
       - 5432:5432
     environment:
       - POSTGRES_PASSWORD=postgres
+
+  load_test:
+    build:
+      context: ./load_test
+    depends_on:
+      - mqtt_broker
+      - app

@@ -1,13 +1,11 @@
 defmodule FogEx.Connector.MQTT.Handler do
   use GenServer
 
-  alias EventStore.EventData
   alias FogEx.Events.VitalSignEvent
   alias FogEx.EventStore
 
   require Logger
 
-  @impl true
   def start_link(opts) do
     GenServer.start_link(__MODULE__, opts, name: __MODULE__)
   end

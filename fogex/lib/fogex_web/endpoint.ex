@@ -7,12 +7,8 @@ defmodule FogExWeb.Endpoint do
   @session_options [
     store: :cookie,
     key: "_fogex_key",
-    signing_salt: "Vx/GeNYA"
+    signing_salt: "A4EzjJhM"
   ]
-
-  socket "/socket", FogExWeb.UserSocket,
-    websocket: true,
-    longpoll: false
 
   socket "/live", Phoenix.LiveView.Socket, websocket: [connect_info: [session: @session_options]]
 
@@ -24,7 +20,7 @@ defmodule FogExWeb.Endpoint do
     at: "/",
     from: :fogex,
     gzip: false,
-    only: ~w(css fonts images js favicon.ico robots.txt)
+    only: ~w(assets fonts images favicon.ico robots.txt)
 
   # Code reloading can be explicitly enabled under the
   # :code_reloader configuration of your endpoint.
