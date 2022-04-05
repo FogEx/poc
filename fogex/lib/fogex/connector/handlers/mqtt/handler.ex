@@ -1,52 +1,63 @@
 defmodule FogEx.Connector.MQTT.Handler do
-  use GenServer
+  use Tortoise.Handler
 
   alias FogEx.Events.VitalSignEvent
   alias FogEx.EventStore
 
   require Logger
 
-  def start_link(opts) do
-    GenServer.start_link(__MODULE__, opts, name: __MODULE__)
+  def init(args) do
+    {:ok, args}
   end
 
-  # Callbacks
-  @impl true
-  def init(opts) do
-    {:ok, opts}
+  def connection(status, state) do
+    # `status` will be either `:up` or `:down`; you can use this to
+    # inform the rest of your system if the connection is currently
+    # open or closed; tortoise should be busy reconnecting if you get
+    # a `:down`
+
+    case status do
+      :up ->
+        Logger.debug("Got connected")
+
+      :down ->
+        Logger.debug("Got disconnected")
+    end
+
+    {:ok, state}
   end
 
-  @impl true
-  def handle_cast({:mqtt, :connect}, state) do
-    Logger.debug("Got connect")
+  def handle_message(["vital_signs", user_id] = topic, payload, state) do
+    Logger.debug("Message #{inspect(payload)} from topic #{Enum.join(topic, "/")}")
 
-    {:noreply, state}
-  end
+    {:ok, vital_sign} = Poison.decode(payload, as: %VitalSignEvent{}, keys: :atoms)
 
-  @impl true
-  def handle_cast({:mqtt, :disconnect}, state) do
-    Logger.debug("Got disconnect")
-
-    {:noreply, state}
-  end
-
-  @impl true
-  def handle_cast({:mqtt, :publish, "vital_signs/" <> user_id = topic, message}, state) do
-    Logger.debug("Got message #{inspect(message)} from topic #{inspect(topic)}")
-
-    {:ok, vital_sign} = Poison.decode(message, as: %VitalSignEvent{}, keys: :atoms)
-
-    event_name = vital_sign.type <> "_registered"
+    event_name = "#{vital_sign.type}_registered"
 
     EventStore.append_to_stream(event_name, vital_sign)
 
-    {:noreply, state}
+    {:ok, state}
   end
 
-  @impl true
-  def handle_cast({:mqtt, :publish, topic, message}, state) do
-    Logger.debug("Unhandled message #{inspect(message)} from topic #{inspect(topic)}")
+  def handle_message(topic, payload, state) do
+    # unhandled message! You will crash if you subscribe to something
+    # and you don't have a 'catch all' matcher; crashing on unexpected
+    # messages could be a strategy though.
 
-    {:noreply, state}
+    Logger.debug("Unhandled message #{inspect(payload)} from topic #{inspect(topic)}")
+
+    {:ok, state}
+  end
+
+  def subscription(status, topic_filter, state) do
+    {:ok, state}
+  end
+
+  def terminate(reason, state) do
+    # tortoise doesn't care about what you return from terminate/2,
+    # that is in alignment with other behaviours that implement a
+    # terminate-callback
+
+    :ok
   end
 end

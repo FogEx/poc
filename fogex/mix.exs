@@ -47,7 +47,7 @@ defmodule FogEx.MixProject do
       {:eventstore,
        github: "commanded/eventstore", branch: "master", runtime: Mix.env() != :test},
       {:elixir_uuid, "~> 1.2"},
-      {:mqtt_potion, github: "brianmay/mqtt_potion", branch: "master"},
+      {:tortoise, "~> 0.10.0"},
       {:poison, "~> 5.0"},
       {:libcluster, "~> 3.3"},
       {:swarm, "~> 3.4"}

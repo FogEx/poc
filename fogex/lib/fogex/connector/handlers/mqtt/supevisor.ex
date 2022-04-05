@@ -1,7 +1,6 @@
 defmodule FogEx.Connector.MQTT.Supervisor do
   use Supervisor
 
-  @impl true
   def start_link(init_arg) do
     Supervisor.start_link(__MODULE__, init_arg, name: __MODULE__)
   end
@@ -12,22 +11,19 @@ defmodule FogEx.Connector.MQTT.Supervisor do
     mqtt_port = Application.get_env(:fogex, :mqtt_port)
 
     mqtt_opts = [
-      name: MqttPotion.Connection,
-      host: mqtt_host,
-      port: mqtt_port,
-      ssl: false,
-      protocol_version: 5,
       client_id: "connector_mqtt_client",
-      ssl_opts: [],
-      handler_pid: FogEx.Connector.MQTT.Handler,
+      server: {
+        Tortoise.Transport.Tcp,
+        host: mqtt_host, port: mqtt_port
+      },
+      handler: {FogEx.Connector.MQTT.Handler, []},
       subscriptions: [
         {"vital_signs/#", 0}
       ]
     ]
 
     children = [
-      {MqttPotion.Connection, mqtt_opts},
-      FogEx.Connector.MQTT.Handler
+      {Tortoise.Connection, mqtt_opts}
     ]
 
     Supervisor.init(children, strategy: :one_for_one)
