@@ -4,6 +4,7 @@ defmodule FogEx.DataProcessor.BodyTemperatureRegistered.Handler do
   alias FogEx.EventStore
   alias FogEx.Events.{NotificationEvent, VitalSignEvent}
   alias FogEx.Health.BodyTemperature
+  alias FogEx.Telemetry.Events, as: EventsTelemetry
 
   def start_link(initial_args) do
     GenServer.start_link(__MODULE__, initial_args)
@@ -18,7 +19,13 @@ defmodule FogEx.DataProcessor.BodyTemperatureRegistered.Handler do
       }) do
     subscription = EventStore.subscribe(stream_uuid, subscription_name, self(), concurrency_limit)
 
-    {:ok, %{subscription: subscription}}
+    state = %{
+      subscription: subscription,
+      subscription_name: subscription_name,
+      stream_uuid: stream_uuid
+    }
+
+    {:ok, state}
   end
 
   def init(%{}), do: {:stop, :bad_init_args}
@@ -30,7 +37,13 @@ defmodule FogEx.DataProcessor.BodyTemperatureRegistered.Handler do
 
   # Event notification
   def handle_info({:events, [event]}, state) do
-    %{subscription: subscription} = state
+    start_time = System.monotonic_time()
+
+    %{subscription: subscription, stream_uuid: stream_uuid} = state
+
+    EventsTelemetry.increment_total(%{
+      type: String.to_atom(stream_uuid)
+    })
 
     %VitalSignEvent{user_id: user_id, data: %{temperature: body_temperature}} = event.data
 
@@ -58,6 +71,10 @@ defmodule FogEx.DataProcessor.BodyTemperatureRegistered.Handler do
 
     # Confirm receipt of received events
     :ok = EventStore.ack(subscription, [event])
+
+    EventsTelemetry.register_process_time(start_time, System.monotonic_time(), %{
+      type: String.to_atom(stream_uuid)
+    })
 
     {:noreply, state}
   end

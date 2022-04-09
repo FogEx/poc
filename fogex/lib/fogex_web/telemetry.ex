@@ -21,6 +21,26 @@ defmodule FogExWeb.Telemetry do
 
   def metrics do
     [
+      # MQTT
+      summary("mqtt.process_time",
+        unit: {:native, :millisecond},
+        description: "The time spent to process each MQTT message"
+      ),
+      counter("mqtt.total",
+        description: "Total of MQTT messages"
+      ),
+
+      # Events Metrics
+      summary("events.process_time",
+        tags: [:type],
+        unit: {:native, :millisecond},
+        description: "The time spent to process each event"
+      ),
+      counter("events.total",
+        tags: [:type],
+        description: "Total of events"
+      ),
+
       # Phoenix Metrics
       summary("phoenix.endpoint.stop.duration",
         unit: {:native, :millisecond}

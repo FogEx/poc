@@ -2,6 +2,7 @@ defmodule FogEx.Notificator.NotificationRegistered.Handler do
   use GenServer
 
   alias FogEx.EventStore
+  alias FogEx.Telemetry.Events, as: EventsTelemetry
   # alias FogEx.Events.{NotificationEvent}
 
   def start_link(initial_args) do
@@ -17,7 +18,13 @@ defmodule FogEx.Notificator.NotificationRegistered.Handler do
       }) do
     subscription = EventStore.subscribe(stream_uuid, subscription_name, self(), concurrency_limit)
 
-    {:ok, %{subscription: subscription}}
+    state = %{
+      subscription: subscription,
+      subscription_name: subscription_name,
+      stream_uuid: stream_uuid
+    }
+
+    {:ok, state}
   end
 
   def init(%{}), do: {:stop, :bad_init_args}
@@ -29,7 +36,13 @@ defmodule FogEx.Notificator.NotificationRegistered.Handler do
 
   # Event notification
   def handle_info({:events, [event]}, state) do
-    %{subscription: subscription} = state
+    start_time = System.monotonic_time()
+
+    %{subscription: subscription, stream_uuid: stream_uuid} = state
+
+    EventsTelemetry.increment_total(%{
+      type: String.to_atom(stream_uuid)
+    })
 
     # TO-DO: handle notification event
     # %NotificationEvent{
@@ -40,6 +53,10 @@ defmodule FogEx.Notificator.NotificationRegistered.Handler do
 
     # Confirm receipt of received events
     :ok = EventStore.ack(subscription, [event])
+
+    EventsTelemetry.register_process_time(start_time, System.monotonic_time(), %{
+      type: String.to_atom(stream_uuid)
+    })
 
     {:noreply, state}
   end

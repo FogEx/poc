@@ -1,8 +1,14 @@
 defmodule FogExWeb.Router do
   use FogExWeb, :router
 
+  import Plug.BasicAuth
+
   pipeline :api do
     plug :accepts, ["json"]
+  end
+
+  pipeline :auth do
+    plug :basic_auth, Application.get_env(:fogex, :basic_auth)
   end
 
   scope "/api", FogExWeb do
@@ -18,13 +24,15 @@ defmodule FogExWeb.Router do
   # If your application does not have an admins-only section yet,
   # you can use Plug.BasicAuth to set up some basic authentication
   # as long as you are also using SSL (which you should anyway).
-  if Mix.env() in [:dev, :test] do
-    import Phoenix.LiveDashboard.Router
+  import Phoenix.LiveDashboard.Router
 
-    scope "/" do
-      pipe_through [:fetch_session, :protect_from_forgery]
-
-      live_dashboard "/dashboard", metrics: FogExWeb.Telemetry
+  scope "/" do
+    if Mix.env() == :prod do
+      pipe_through :auth
     end
+
+    pipe_through [:fetch_session, :protect_from_forgery]
+
+    live_dashboard "/dashboard", metrics: FogExWeb.Telemetry
   end
 end
