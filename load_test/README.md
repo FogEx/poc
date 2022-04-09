@@ -31,6 +31,12 @@ yarn install
 yarn run build
 ```
 
+- Gerando dados de teste
+
+```powershell
+yarn run generate-data
+```
+
 - Executando
 
   - Apenas uma vez

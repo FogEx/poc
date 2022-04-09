@@ -11,7 +11,8 @@
   },
   "engines": {},
   "scripts": {
-    "build": "webpack"
+    "build": "webpack",
+    "generate-data": "webpack --entry ./src/generateData.js --output-filename generateData.bundle.js && node build/generateData.bundle.js"
   },
   "dependencies": {
 

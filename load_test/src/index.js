@@ -1,10 +1,12 @@
 import { check } from 'k6'
-
-import { generateBodyTemperatureData } from './generators/body-temperature'
-
-import { connect, close, publish } from 'k6/x/mqtt'
-
+import { SharedArray } from 'k6/data'
 import { Trend } from 'k6/metrics'
+import { connect, close, publish } from 'k6/x/mqtt'
+import { scenario } from 'k6/execution'
+
+const sharedData = new SharedArray('some data name', function () {
+  return JSON.parse(open('./data.json'))
+})
 
 const connections = {}
 
@@ -15,8 +17,19 @@ const publish_trend = new Trend('publish_time', true)
 const host = 'localhost'
 const port = '1883'
 
+export const options = {
+  scenarios: {
+    'default': {
+      executor: 'shared-iterations',
+      vus: 10,
+      iterations: sharedData.length,
+      maxDuration: '1h',
+    },
+  },
+};
+
 export default function () {
-    const data = generateBodyTemperatureData()
+    const data = sharedData[scenario.iterationInTest]
 
     const topic = `vital_signs/${data.user_id}`
     const topicMessage = JSON.stringify(data)

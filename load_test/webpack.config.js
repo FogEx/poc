@@ -20,7 +20,7 @@ module.exports = {
   stats: {
     colors: true,
   },
-  target: 'web',
+  target: 'node',
   externals: /^(k6|https?\:\/\/)(\/.*)?/,
   devtool: 'source-map',
 }
