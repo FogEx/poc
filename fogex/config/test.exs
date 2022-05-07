@@ -13,6 +13,17 @@ config :fogex, FogEx.Repo,
   pool: Ecto.Adapters.SQL.Sandbox,
   pool_size: 10
 
+config :fogex, FogEx.TestEventStore,
+  serializer: EventStore.JsonSerializer,
+  username: "postgres",
+  password: "postgres",
+  database: "eventstore_test#{System.get_env("MIX_TEST_PARTITION")}",
+  hostname: "localhost"
+
+config :fogex, event_stores: [FogEx.TestEventStore]
+
+config :fogex, :eventstore, FogEx.TestEventStore
+
 # We don't run a server during test. If one is required,
 # you can enable the server option below.
 config :fogex, FogExWeb.Endpoint,

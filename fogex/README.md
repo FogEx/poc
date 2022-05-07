@@ -60,7 +60,7 @@ docker run --rm -it -e "DATABASE_URL=$env:DATABASE_URL" -e "EVENT_STORE_URL=$env
 
 ## 💡 Exemplos
 
-### Exemplo de evento de sinal vital
+### Exemplos de eventos de sinal vital
 
 - Tópico: `vital_signs/{user_id}`
 - Conteúdo:
@@ -70,6 +70,17 @@ docker run --rm -it -e "DATABASE_URL=$env:DATABASE_URL" -e "EVENT_STORE_URL=$env
     "type": "body_temperature",
     "data": {
       "temperature": 33
+    },
+    "user_id": "1234"
+  }
+
+  // ou
+
+  {
+    "type": "vital_signs",
+    "data": {
+      "hearth_rate": 12,
+      "respiratory_rate": 120
     },
     "user_id": "1234"
   }

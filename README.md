@@ -22,7 +22,8 @@ docker-compose build
 $env:SECRET_KEY_BASE="$(mix phx.gen.secret)"
 $env:DATABASE_URL="postgresql://postgres:postgres@db:5432/fogex_dev"
 $env:EVENT_STORE_URL="postgresql://postgres:postgres@db:5432/eventstore"
-$env:MQTT_HOST="mqtt_broker"
+
+# ou adicione essas variáveis num arquivo .env
 
 docker-compose up -d
 ```

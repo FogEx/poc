@@ -11,6 +11,10 @@ config :fogex,
   namespace: FogEx,
   ecto_repos: [FogEx.Repo]
 
+config :fogex, FogEx.Repo,
+  migration_primary_key: [type: :binary_id],
+  migration_foreign_key: [type: :binary_id]
+
 # Configures the endpoint
 config :fogex, FogExWeb.Endpoint,
   url: [host: "localhost"],
@@ -27,6 +31,10 @@ config :logger, :console,
 config :phoenix, :json_library, Jason
 
 config :fogex, event_stores: [FogEx.EventStore]
+
+config :fogex, FogEx.EventStore, serializer: EventStore.JsonSerializer
+
+config :fogex, :eventstore, FogEx.EventStore
 
 config :fogex,
   mqtt_host: System.get_env("MQTT_HOST") || "localhost",

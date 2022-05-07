@@ -10,10 +10,9 @@ config :fogex, FogEx.Repo,
   pool_size: 10
 
 config :fogex, FogEx.EventStore,
-  serializer: EventStore.JsonSerializer,
   username: "postgres",
   password: "postgres",
-  database: "eventstore",
+  database: "eventstore_dev",
   hostname: "localhost"
 
 # For development, we disable any cache and enable

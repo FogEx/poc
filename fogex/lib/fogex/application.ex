@@ -7,6 +7,8 @@ defmodule FogEx.Application do
 
   @impl true
   def start(_type, _args) do
+    event_store = Application.get_env(:fogex, :eventstore)
+
     children = [
       {Cluster.Supervisor, [topologies(), [name: FogEx.Cluster.Supervisor]]},
 
@@ -25,19 +27,19 @@ defmodule FogEx.Application do
       # Start a worker by calling: FogEx.Worker.start_link(arg)
       # {FogEx.Worker, arg}
 
-      FogEx.EventStore,
+      event_store,
 
-      # Connector
-      FogEx.Connector.Supervisor,
-      FogEx.Connector.Starter,
+      # Connector Module
+      FogEx.Modules.Connector.Supervisor,
+      FogEx.Modules.Connector.Starter,
 
-      # DataProcessor
-      FogEx.DataProcessor.Supervisor,
-      FogEx.DataProcessor.Starter,
+      # DataProcessor Module
+      FogEx.Modules.DataProcessor.Supervisor,
+      FogEx.Modules.DataProcessor.Starter,
 
-      # Notificator
-      FogEx.Notificator.Supervisor,
-      FogEx.Notificator.Starter
+      # Notificator Module
+      FogEx.Modules.Notificator.Supervisor,
+      FogEx.Modules.Notificator.Starter
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

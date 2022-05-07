@@ -4,17 +4,17 @@ services:
   app_1:
     build:
       context: ./fogex
+    image: fogex
     environment:
+      - SECRET_KEY_BASE
       - DATABASE_URL
       - EVENT_STORE_URL
-      - SECRET_KEY_BASE
       - MQTT_HOST=mqtt_broker
       - MQTT_PORT=1883
       - PHX_HOST=0.0.0.0
       - PHX_PORT=4000
       - PHX_SERVER=true
       - RELEASE_NAME=fogex
-    image: fogex
     depends_on:
       - mqtt_broker
       - db
@@ -24,20 +24,21 @@ services:
   app_2:
     build:
       context: ./fogex
+    image: fogex
     environment:
+      - SECRET_KEY_BASE
       - DATABASE_URL
       - EVENT_STORE_URL
-      - SECRET_KEY_BASE
       - MQTT_HOST=mqtt_broker
       - MQTT_PORT=1883
       - PHX_HOST=0.0.0.0
       - PHX_PORT=4000
       - PHX_SERVER=true
       - RELEASE_NAME=fogex
-    image: fogex
     depends_on:
       - mqtt_broker
       - db
+      - db_migrations
     ports:
       - 4002:4000
 
@@ -50,11 +51,35 @@ services:
       - ./mqtt_broker/config/:/mosquitto/config/
 
   db:
-    image: postgres:13.6
+    image: postgres:14
     ports:
       - 5432:5432
+    env_file:
+      - .env
     environment:
       - POSTGRES_PASSWORD=postgres
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready" ]
+      start_period: 10s
+      retries: 5
+      interval: 10s
+      timeout: 3s
+
+  db_migrations:
+    build:
+      context: ./fogex
+      dockerfile: Dockerfile.migrations
+    image: fogex/migrations
+    env_file:
+      - .env
+    environment:
+      - SECRET_KEY_BASE
+      - DATABASE_URL
+      - EVENT_STORE_URL
+    depends_on:
+      db:
+        condition: service_healthy
+    command: mix setup
 
   load_test:
     build:
