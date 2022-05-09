@@ -1,0 +1,17 @@
+pre-commit:
+  parallel: true
+  commands:
+    format:
+      glob: "*.{ex, exs}"
+      root: fogex/
+      run: mix format
+
+    compile:
+      glob: "*.{ex, exs}"
+      root: fogex/
+      run: mix compile
+
+    test:
+      glob: "*.{ex, exs}"
+      root: fogex/
+      run: mix test
