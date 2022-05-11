@@ -6,18 +6,21 @@ services:
       context: ./fogex
     image: fogex
     environment:
-      - SECRET_KEY_BASE
-      - DATABASE_URL
-      - EVENT_STORE_URL
-      - MQTT_HOST=mqtt_broker
-      - MQTT_PORT=1883
-      - PHX_HOST=0.0.0.0
-      - PHX_PORT=4000
-      - PHX_SERVER=true
-      - RELEASE_NAME=fogex
+      SECRET_KEY_BASE: ${SECRET_KEY_BASE}
+      DATABASE_URL: ${DATABASE_URL}
+      EVENT_STORE_URL: ${EVENT_STORE_URL}
+      MQTT_HOST: mqtt_broker
+      MQTT_PORT: 1883
+      PHX_HOST: 0.0.0.0
+      PHX_PORT: 4000
+      PHX_SERVER: true
+      RELEASE_NAME: fogex
+      RELEASE_COOKIE: fogex-cookie
     depends_on:
-      - mqtt_broker
-      - db
+      db:
+        condition: service_healthy
+      db_migrations:
+        condition: service_completed_successfully
     ports:
       - 4001:4000
 
@@ -26,21 +29,46 @@ services:
       context: ./fogex
     image: fogex
     environment:
-      - SECRET_KEY_BASE
-      - DATABASE_URL
-      - EVENT_STORE_URL
-      - MQTT_HOST=mqtt_broker
-      - MQTT_PORT=1883
-      - PHX_HOST=0.0.0.0
-      - PHX_PORT=4000
-      - PHX_SERVER=true
-      - RELEASE_NAME=fogex
+      SECRET_KEY_BASE: ${SECRET_KEY_BASE}
+      DATABASE_URL: ${DATABASE_URL}
+      EVENT_STORE_URL: ${EVENT_STORE_URL}
+      MQTT_HOST: mqtt_broker
+      MQTT_PORT: 1883
+      PHX_HOST: 0.0.0.0
+      PHX_PORT: 4000
+      PHX_SERVER: true
+      RELEASE_NAME: fogex
+      RELEASE_COOKIE: fogex-cookie
     depends_on:
-      - mqtt_broker
-      - db
-      - db_migrations
+      db:
+        condition: service_healthy
+      db_migrations:
+        condition: service_completed_successfully
     ports:
       - 4002:4000
+
+  app_3:
+    build:
+      context: ./fogex
+    image: fogex
+    environment:
+      SECRET_KEY_BASE: ${SECRET_KEY_BASE}
+      DATABASE_URL: ${DATABASE_URL}
+      EVENT_STORE_URL: ${EVENT_STORE_URL}
+      MQTT_HOST: mqtt_broker
+      MQTT_PORT: 1883
+      PHX_HOST: 0.0.0.0
+      PHX_PORT: 4000
+      PHX_SERVER: true
+      RELEASE_NAME: fogex
+      RELEASE_COOKIE: fogex-cookie
+    depends_on:
+      db:
+        condition: service_healthy
+      db_migrations:
+        condition: service_completed_successfully
+    ports:
+      - 4003:4000
 
   mqtt_broker:
     image: eclipse-mosquitto:2.0.14
@@ -49,6 +77,16 @@ services:
       - 9001:9001
     volumes:
       - ./mqtt_broker/config/:/mosquitto/config/
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "mosquitto_sub -p 1883 -t 'topic' -C 1 -E -i probe -W 3"
+        ]
+      start_period: 10s
+      retries: 5
+      interval: 10s
+      timeout: 3s
 
   db:
     image: postgres:14
@@ -70,20 +108,11 @@ services:
       context: ./fogex
       dockerfile: Dockerfile.migrations
     image: fogex/migrations
-    env_file:
-      - .env
     environment:
-      - SECRET_KEY_BASE
-      - DATABASE_URL
-      - EVENT_STORE_URL
+      SECRET_KEY_BASE: ${SECRET_KEY_BASE}
+      DATABASE_URL: ${DATABASE_URL}
+      EVENT_STORE_URL: ${EVENT_STORE_URL}
     depends_on:
       db:
         condition: service_healthy
     command: mix setup
-
-  load_test:
-    build:
-      context: ./load_test
-    depends_on:
-      - mqtt_broker
-      - app
