@@ -24,20 +24,24 @@ defmodule FogEx.Modules.Connector.Supervisor do
 
   # Swarm callbacks
   def handle_call({:swarm, :begin_handoff}, _from, state) do
-    Logger.debug("Begin handoff of module #{inspect(__MODULE__)} on #{node()}")
+    log_info("Begin handoff")
 
     {:reply, :restart, state}
   end
 
   def handle_cast({:swarm, :resolve_conflict, _}, state) do
-    Logger.debug("Resolving conflict of module #{inspect(__MODULE__)} on #{node()}")
+    log_info("Resolving conflict")
 
     {:noreply, state}
   end
 
   def handle_info({:swarm, :die}, state) do
-    Logger.debug("Death of module #{inspect(__MODULE__)} on #{node()}")
+    log_info("Death")
 
     {:stop, :shutdown, state}
+  end
+
+  defp log_info(message) do
+    Logger.info("[#{__MODULE__}] [#{node()}] #{message}")
   end
 end

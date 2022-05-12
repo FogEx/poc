@@ -1,35 +1,55 @@
 defmodule FogEx.Modules.DataProcessor.Starter do
+  use GenServer
+
   alias FogEx.Modules.DataProcessor.Supervisor, as: DataProcessorSupervisor
 
-  alias FogEx.Modules.DataProcessor.BodyTemperatureRegistered.Supervisor,
-    as: BodyTemperatureRegisteredSupervisor
+  require Logger
 
-  alias FogEx.Modules.DataProcessor.VitalSignsRegistered.Supervisor,
-    as: VitalSignsRegisteredSupervisor
-
-  def child_spec(opts) do
-    %{
-      id: __MODULE__,
-      start: {__MODULE__, :start_link, [opts]},
-      type: :worker
-    }
+  def start_link([module: module, name: name] = opts) do
+    GenServer.start_link(__MODULE__, opts, name: name)
   end
 
-  def start_link(opts) do
-    Swarm.register_name(
-      VitalSignsRegisteredSupervisor,
-      DataProcessorSupervisor,
-      :start_child,
-      [VitalSignsRegisteredSupervisor, opts]
-    )
+  @impl true
+  def init([module: module, name: _name] = opts) do
+    {:ok, opts, {:continue, {:start_and_monitor, module, 1}}}
+  end
 
-    Swarm.register_name(
-      BodyTemperatureRegisteredSupervisor,
-      DataProcessorSupervisor,
-      :start_child,
-      [BodyTemperatureRegisteredSupervisor, opts]
-    )
+  @impl true
+  def handle_continue({:start_and_monitor, module, retry}, opts) do
+    log_info("Starting and monitoring #{retry}: #{inspect(opts)}...")
 
-    :ignore
+    case Swarm.whereis_or_register_name(
+           module,
+           DataProcessorSupervisor,
+           :start_child,
+           [module, opts]
+         ) do
+      {:ok, pid} ->
+        Process.monitor(pid)
+
+        {:noreply, {pid, opts}}
+
+      other ->
+        log_error("Error while fetching or registering process: #{inspect(other)}")
+
+        Process.sleep(500)
+
+        {:noreply, opts, {:continue, {:start_and_monitor, module, retry + 1}}}
+    end
+  end
+
+  @impl true
+  def handle_info({:DOWN, _, :process, pid, _reason}, {pid, [module: module] = opts}) do
+    log_info("Process down, restarting... #{inspect(opts)}")
+
+    {:noreply, opts, {:continue, {:start_and_monitor, module, 1}}}
+  end
+
+  defp log_error(message) do
+    Logger.info("[#{__MODULE__}] [#{node()}] #{message}")
+  end
+
+  defp log_info(message) do
+    Logger.info("[#{__MODULE__}] [#{node()}] #{message}")
   end
 end

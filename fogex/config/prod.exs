@@ -14,7 +14,7 @@ config :fogex, FogExWeb.Endpoint,
   cache_static_manifest: "priv/static/cache_manifest.json"
 
 # Do not print debug messages in production
-config :logger, level: :info
+config :logger, format: "$time [$level] [$node] $message\n", level: :info
 
 config :fogex, :basic_auth,
   username: "admin",

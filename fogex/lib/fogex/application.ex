@@ -5,6 +5,12 @@ defmodule FogEx.Application do
 
   use Application
 
+  alias FogEx.Modules.DataProcessor.BodyTemperatureRegistered.Supervisor,
+    as: BodyTemperatureRegisteredSupervisor
+
+  alias FogEx.Modules.DataProcessor.VitalSignsRegistered.Supervisor,
+    as: VitalSignsRegisteredSupervisor
+
   @impl true
   def start(_type, _args) do
     event_store = Application.get_env(:fogex, :eventstore)
@@ -35,7 +41,22 @@ defmodule FogEx.Application do
 
       # DataProcessor Module
       FogEx.Modules.DataProcessor.Supervisor,
-      FogEx.Modules.DataProcessor.Starter,
+      Supervisor.child_spec(
+        {FogEx.Modules.DataProcessor.Starter,
+         [
+           module: BodyTemperatureRegisteredSupervisor,
+           name: BodyTemperatureRegisteredSupervisor.Starter
+         ]},
+        id: BodyTemperatureRegisteredSupervisor.Starter
+      ),
+      Supervisor.child_spec(
+        {FogEx.Modules.DataProcessor.Starter,
+         [
+           module: VitalSignsRegisteredSupervisor,
+           name: VitalSignsRegisteredSupervisor.Starter
+         ]},
+        id: VitalSignsRegisteredSupervisor.Starter
+      ),
 
       # Notificator Module
       FogEx.Modules.Notificator.Supervisor,

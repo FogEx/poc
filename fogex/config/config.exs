@@ -11,6 +11,10 @@ config :fogex,
   namespace: FogEx,
   ecto_repos: [FogEx.Repo]
 
+config :swarm,
+  distribution_strategy: Swarm.Distribution.StaticQuorumRing,
+  static_quorum_size: 2
+
 config :fogex, FogEx.Repo,
   migration_primary_key: [type: :binary_id],
   migration_foreign_key: [type: :binary_id]
@@ -24,7 +28,7 @@ config :fogex, FogExWeb.Endpoint,
 
 # Configures Elixir's Logger
 config :logger, :console,
-  format: "$time $metadata[$level] $message\n",
+  format: "$time $metadata[$level] [$node] $message\n",
   metadata: [:request_id]
 
 # Use Jason for JSON parsing in Phoenix
