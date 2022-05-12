@@ -1,4 +1,4 @@
-import { check } from 'k6'
+import { check, sleep } from 'k6'
 import { SharedArray } from 'k6/data'
 import { Trend } from 'k6/metrics'
 import { connect, close, publish } from 'k6/x/mqtt'
@@ -16,6 +16,8 @@ const publish_trend = new Trend('publish_time', true)
 
 const host = 'localhost'
 const port = '1883'
+
+const delay = .1; // 100 ms
 
 export const options = {
   scenarios: {
@@ -84,6 +86,8 @@ export default function () {
             // timeout in ms
             timeout
         )
+
+        sleep(delay)
 
         publish_trend.add(new Date().getTime() - startTime)
     } catch (error) {
