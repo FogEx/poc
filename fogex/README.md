@@ -88,9 +88,12 @@ docker run --rm -it -e "DATABASE_URL=$env:DATABASE_URL" -e "EVENT_STORE_URL=$env
 
 ## 📌 Referências
 
-- [Replacing GenEvent by a Supervisor + GenServer](http://blog.plataformatec.com.br/2016/11/replacing-genevent-by-a-supervisor-genserver/)
-- [Three real-world examples of distributed Elixir](https://bigardone.dev/blog/2021/05/22/three-real-world-examples-of-distributed-elixir-pt-1)
-- [Elixir School: Poolboy](https://elixirschool.com/en/lessons/misc/poolboy)
+- Posts úteis:
+  - [Replacing GenEvent by a Supervisor + GenServer](http://blog.plataformatec.com.br/2016/11/replacing-genevent-by-a-supervisor-genserver/)
+  - [Three real-world examples of distributed Elixir](https://bigardone.dev/blog/2021/05/22/three-real-world-examples-of-distributed-elixir-pt-1)
+  - [Elixir School: Poolboy](https://elixirschool.com/en/lessons/misc/poolboy)
+  - [Elixir Telemetry: Metrics and Reporters](https://samuelmullen.com/articles/elixir-telemetry-metrics-and-reporters)
+  - [LiveDashboard: Configuring metrics history](https://hexdocs.pm/phoenix_live_dashboard/metrics_history.html)
 - Bibliotecas utilizadas
   - [EventStore](https://github.com/commanded/eventstore)
   - [MQTTPotion](https://github.com/brianmay/mqtt_potion)
