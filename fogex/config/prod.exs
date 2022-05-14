@@ -20,6 +20,10 @@ config :fogex, :basic_auth,
   username: "admin",
   password: "admin"
 
+config :swarm,
+  distribution_strategy: Swarm.Distribution.StaticQuorumRing,
+  static_quorum_size: 2
+
 # ## SSL Support
 #
 # To get SSL working, you will need to add the `https` key

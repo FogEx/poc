@@ -16,7 +16,6 @@ services:
       PHX_SERVER: true
       RELEASE_NAME: fogex
       RELEASE_COOKIE: fogex-cookie
-      APPSIGNAL_APP_ENV: ${APPSIGNAL_APP_ENV}
       APPSIGNAL_PUSH_API_KEY: ${APPSIGNAL_PUSH_API_KEY}
     depends_on:
       db:
@@ -41,7 +40,6 @@ services:
       PHX_SERVER: true
       RELEASE_NAME: fogex
       RELEASE_COOKIE: fogex-cookie
-      APPSIGNAL_APP_ENV: ${APPSIGNAL_APP_ENV}
       APPSIGNAL_PUSH_API_KEY: ${APPSIGNAL_PUSH_API_KEY}
     depends_on:
       db:
@@ -66,7 +64,6 @@ services:
       PHX_SERVER: true
       RELEASE_NAME: fogex
       RELEASE_COOKIE: fogex-cookie
-      APPSIGNAL_APP_ENV: ${APPSIGNAL_APP_ENV}
       APPSIGNAL_PUSH_API_KEY: ${APPSIGNAL_PUSH_API_KEY}
     depends_on:
       db:

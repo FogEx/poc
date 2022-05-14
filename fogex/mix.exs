@@ -33,26 +33,39 @@ defmodule FogEx.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
+      # Web
       {:phoenix, "~> 1.6.6"},
       {:phoenix_live_dashboard, "~> 0.6"},
       {:phoenix_ecto, "~> 4.4"},
-      {:telemetry_poller, "~> 1.0"},
-      {:ecto_sql, "~> 3.6"},
-      {:postgrex, ">= 0.0.0"},
-      {:telemetry_metrics, "~> 0.6"},
-      {:gettext, "~> 0.18"},
-      {:jason, "~> 1.2"},
       {:plug_cowboy, "~> 2.5"},
-      {:credo, "~> 1.5", only: [:dev, :test], runtime: false},
-      {:eventstore, github: "commanded/eventstore", branch: "master"},
-      {:elixir_uuid, "~> 1.2"},
+
+      # Bibliotecas essenciais
       {:mqtt_potion, github: "brianmay/mqtt_potion", branch: "master"},
-      {:poison, "~> 5.0"},
+      {:eventstore, github: "commanded/eventstore", branch: "master"},
       {:libcluster, "~> 3.3"},
       {:swarm, "~> 3.4"},
+
+      # Métricas
+      {:telemetry_poller, "~> 1.0"},
+      {:telemetry_metrics, "~> 0.6"},
+
+      # Base de dados
+      {:ecto_sql, "~> 3.6"},
+      {:postgrex, ">= 0.0.0"},
+
+      # Outras biblitecas úteis
+      {:gettext, "~> 0.18"},
+      {:credo, "~> 1.5", only: [:dev, :test], runtime: false},
+      {:elixir_uuid, "~> 1.2"},
+
+      # Serilização de JSON
+      {:jason, "~> 1.2"},
+      {:poison, "~> 5.0"},
+
+      # AppSignal
       {:appsignal, "~> 2.0"},
       {:appsignal_phoenix, "~> 2.0"},
-      {:telemetry_metrics_appsignal, "~> 1.2"}
+      {:telemetry_metrics_appsignal, "~> 1.0"}
     ]
   end
 
