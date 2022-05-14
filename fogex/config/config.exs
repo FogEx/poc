@@ -15,6 +15,13 @@ config :swarm,
   distribution_strategy: Swarm.Distribution.StaticQuorumRing,
   static_quorum_size: 2
 
+config :appsignal, :config,
+  otp_app: :fogex,
+  name: "fogex"
+
+config :fogex,
+  ecto_repos: [FogEx.Repo]
+
 config :fogex, FogEx.Repo,
   migration_primary_key: [type: :binary_id],
   migration_foreign_key: [type: :binary_id]

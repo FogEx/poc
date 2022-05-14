@@ -49,7 +49,10 @@ defmodule FogEx.MixProject do
       {:mqtt_potion, github: "brianmay/mqtt_potion", branch: "master"},
       {:poison, "~> 5.0"},
       {:libcluster, "~> 3.3"},
-      {:swarm, "~> 3.4"}
+      {:swarm, "~> 3.4"},
+      {:appsignal, "~> 2.0"},
+      {:appsignal_phoenix, "~> 2.0"},
+      {:telemetry_metrics_appsignal, "~> 1.2"}
     ]
   end
 
