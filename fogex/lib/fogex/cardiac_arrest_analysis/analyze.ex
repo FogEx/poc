@@ -1,4 +1,6 @@
 defmodule FogEx.CardiacArrestAnalysis.Analyze do
+  # credo:disable-for-this-file Credo.Check.Refactor.CyclomaticComplexity
+
   @doc """
   Analyzes the hearth rate (bmp) and respiratory (ipm) rate passed and returns a risk of cardiac arrest.
 
@@ -20,12 +22,11 @@ defmodule FogEx.CardiacArrestAnalysis.Analyze do
 
     risk =
       case {hr_risk, rr_risk} do
-        {:low, :low} -> :low
-        {:low, :medium} -> :low
-        {:medium, :low} -> :low
-        {:medium, :medium} -> :medium
         {:high, _} -> :high
         {_, :high} -> :high
+        {:medium, :medium} -> :medium
+        {_, :low} -> :low
+        {:low, _} -> :low
         _ -> :unknown
       end
 
