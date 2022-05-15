@@ -1,0 +1,1 @@
+docker-compose up mqtt_broker db db_migrations -d

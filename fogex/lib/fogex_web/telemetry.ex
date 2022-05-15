@@ -78,7 +78,10 @@ defmodule FogExWeb.Telemetry do
       summary("vm.memory.total", unit: {:byte, :kilobyte}),
       summary("vm.total_run_queue_lengths.total"),
       summary("vm.total_run_queue_lengths.cpu"),
-      summary("vm.total_run_queue_lengths.io")
+      summary("vm.total_run_queue_lengths.io"),
+      summary("vm.system_counts.process_count"),
+      summary("vm.system_counts.atom_count"),
+      summary("vm.system_counts.port_count")
     ]
   end
 

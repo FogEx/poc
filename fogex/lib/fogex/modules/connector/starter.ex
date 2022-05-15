@@ -47,10 +47,10 @@ defmodule FogEx.Modules.Connector.Starter do
   end
 
   defp log_error(message) do
-    Logger.info("[#{__MODULE__}] [#{node()}] #{message}")
+    Logger.error("[#{__MODULE__}] #{message}")
   end
 
   defp log_info(message) do
-    Logger.info("[#{__MODULE__}] [#{node()}] #{message}")
+    Logger.info("[#{__MODULE__}] #{message}")
   end
 end

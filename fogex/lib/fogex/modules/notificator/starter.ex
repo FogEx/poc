@@ -49,7 +49,7 @@ defmodule FogEx.Modules.Notificator.Starter do
   end
 
   defp log_error(message) do
-    Logger.info("[#{__MODULE__}] [#{node()}] #{message}")
+    Logger.error("[#{__MODULE__}] [#{node()}] #{message}")
   end
 
   defp log_info(message) do

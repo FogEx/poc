@@ -9,8 +9,8 @@ defmodule FogExWeb.HealthController do
 
     status =
       case db_status do
-        :ok -> %{status: "Health"}
-        _ -> %{status: "Unhealth"}
+        :ok -> %{status: "Health", node: node()}
+        _ -> %{status: "Unhealth", node: node()}
       end
 
     conn

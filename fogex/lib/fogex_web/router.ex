@@ -4,17 +4,23 @@ defmodule FogExWeb.Router do
   import Plug.BasicAuth
 
   pipeline :api do
-    plug :accepts, ["json"]
+    plug(:accepts, ["json"])
   end
 
   pipeline :auth do
-    plug :basic_auth, Application.get_env(:fogex, :basic_auth)
+    plug(:basic_auth, Application.get_env(:fogex, :basic_auth))
   end
 
   scope "/api", FogExWeb do
-    pipe_through :api
+    pipe_through(:api)
 
-    get "/health", HealthController, :index
+    get("/health", HealthController, :index)
+  end
+
+  scope "/api", FogExWeb do
+    pipe_through(:api)
+
+    get("/metrics", MetricsController, :index)
   end
 
   # Enables LiveDashboard only for development
@@ -28,11 +34,14 @@ defmodule FogExWeb.Router do
 
   scope "/" do
     if Mix.env() == :prod do
-      pipe_through :auth
+      pipe_through(:auth)
     end
 
-    pipe_through [:fetch_session, :protect_from_forgery]
+    pipe_through([:fetch_session, :protect_from_forgery])
 
-    live_dashboard "/dashboard", metrics: FogExWeb.Telemetry
+    live_dashboard("/dashboard",
+      metrics: FogExWeb.Telemetry,
+      metrics_history: {FogEx.Telemetry.MetricsStorage, :metrics_history, []}
+    )
   end
 end

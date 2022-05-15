@@ -57,6 +57,8 @@ defmodule FogEx.MixProject do
       {:gettext, "~> 0.18"},
       {:credo, "~> 1.5", only: [:dev, :test], runtime: false},
       {:elixir_uuid, "~> 1.2"},
+      {:circular_buffer, "~> 0.4.0"},
+      {:csv, "~> 2.4"},
 
       # Serilização de JSON
       {:jason, "~> 1.2"},

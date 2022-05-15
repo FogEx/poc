@@ -23,6 +23,7 @@ defmodule FogEx.Application do
 
       # Start the Telemetry supervisor
       FogExWeb.Telemetry,
+      {FogEx.Telemetry.MetricsStorage, FogExWeb.Telemetry.metrics()},
 
       # Start the PubSub system
       {Phoenix.PubSub, name: FogEx.PubSub},
