@@ -1,7 +1,11 @@
 version: "3.9"
 
+name: fogex
+
 services:
-  app_1:
+  node_1:
+    container_name: node-1
+    hostname: node-1
     build:
       context: ./fogex
     image: fogex
@@ -20,12 +24,14 @@ services:
     depends_on:
       db:
         condition: service_healthy
-      db_migrations:
-        condition: service_completed_successfully
+      mqtt_broker:
+        condition: service_healthy
     ports:
       - 4001:4000
 
-  app_2:
+  node_2:
+    container_name: node-2
+    hostname: node-2
     build:
       context: ./fogex
     image: fogex
@@ -44,12 +50,14 @@ services:
     depends_on:
       db:
         condition: service_healthy
-      db_migrations:
-        condition: service_completed_successfully
+      mqtt_broker:
+        condition: service_healthy
     ports:
       - 4002:4000
 
-  app_3:
+  node_3:
+    container_name: node-3
+    hostname: node-3
     build:
       context: ./fogex
     image: fogex
@@ -68,12 +76,13 @@ services:
     depends_on:
       db:
         condition: service_healthy
-      db_migrations:
-        condition: service_completed_successfully
+      mqtt_broker:
+        condition: service_healthy
     ports:
       - 4003:4000
 
   mqtt_broker:
+    container_name: mqtt-broker
     image: eclipse-mosquitto:2.0.14
     ports:
       - 1883:1883
@@ -92,6 +101,7 @@ services:
       timeout: 3s
 
   db:
+    container_name: db
     image: postgres:14
     ports:
       - 5432:5432

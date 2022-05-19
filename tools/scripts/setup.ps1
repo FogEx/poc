@@ -1,13 +1,6 @@
-Set-Location ./fogex
+Write-Output "===== Setup  ====="
 
-$env:SECRET_KEY_BASE="$(mix phx.gen.secret)"
-$env:DATABASE_URL = "postgresql://postgres:postgres@db:5432/fogex_dev"
-$env:EVENT_STORE_URL = "postgresql://postgres:postgres@db:5432/eventstore_dev"
-$env:MQTT_HOST = "mqtt_broker"
-
-Set-Location ..
-
-Write-Output "1. Removing old containers"
+Write-Output "1. Removing old services"
 
 docker-compose down
 
@@ -15,16 +8,14 @@ Write-Output "2. Building images"
 
 docker-compose build
 
-Write-Output "3. Starting database container"
+Write-Output "3. Starting database service"
 
-docker-compose up -d db
+docker-compose up -d db 
 
-Write-Output "4. Creating database and upgrading migrations"
+Write-Output "4. Migrating database"
 
-Set-Location .\fogex
-mix setup
-Set-Location ..
+docker-compose run --rm db_migrations
 
-Write-Output "5. Starting the others containers"
+Write-Output "5. Starting the others services"
 
-docker-compose up -d
+docker-compose up node_1 node_2 node_3 mqtt_broker -d

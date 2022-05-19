@@ -3,7 +3,7 @@ import { generateVitalSigns } from './generators/vital-signs'
 import * as fs from 'fs';
 
 const json = []
-const dataLength = 10000;
+const dataLength = 50000;
 
 console.info("Starting data generation")
 
