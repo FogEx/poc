@@ -1,10 +1,15 @@
 defmodule FogEx.Telemetry.MetricsStorage do
   use GenServer
 
+  import Ecto.Query
+
+  alias FogEx.Models.Metric
+  alias FogEx.Repo
+
   require Logger
 
-  def metrics_history(metric) do
-    GenServer.call(__MODULE__, {:data, metric})
+  def metrics_history(metric, timeout \\ 60_000) do
+    GenServer.call(__MODULE__, {:data, metric}, timeout)
   end
 
   def start_link(args) do
@@ -15,13 +20,10 @@ defmodule FogEx.Telemetry.MetricsStorage do
   def init(metrics) do
     Process.flag(:trap_exit, true)
 
-    :ets.new(:metrics, [:named_table, :public, :set, {:write_concurrency, true}])
-
     for metric <- metrics do
       log_debug("Starting the storage of metric #{inspect(metric.name)}")
 
       attach_handler(metric)
-      :ets.insert(:metrics, {metric.name, []})
     end
 
     {:ok, metrics}
@@ -44,11 +46,9 @@ defmodule FogEx.Telemetry.MetricsStorage do
 
   @impl true
   def handle_cast({:telemetry_metric, data, metric_name}, state) do
-    history = lookup_metrics_history(metric_name)
+    metric = map_metric(data, metric_name)
 
-    data = Map.put_new(data, :node, node())
-
-    :ets.insert(:metrics, {metric_name, [data | history]})
+    {:ok, _} = metric |> Metric.changeset() |> Repo.insert()
 
     {:noreply, state}
   end
@@ -80,12 +80,27 @@ defmodule FogEx.Telemetry.MetricsStorage do
   end
 
   defp lookup_metrics_history(metric_name) do
-    metrics_history = :ets.lookup(:metrics, metric_name)
+    name = metric_name_as_string(metric_name)
+    node = node_as_string()
+    query = from(Metric, where: [name: ^name, node: ^node])
 
-    case metrics_history do
-      [{_key, data}] -> data
-      _ -> []
-    end
+    Repo.all(query)
+  end
+
+  defp map_metric(data, metric_name) do
+    data
+    |> Map.put_new(:node, node_as_string())
+    |> Map.put_new(:name, metric_name_as_string(metric_name))
+    |> Map.update(:time, nil, fn time -> DateTime.from_unix!(time, :microsecond) end)
+  end
+
+  defp metric_name_as_string(metric_name) do
+    metric_name
+    |> Enum.map_join(".", &Atom.to_string/1)
+  end
+
+  defp node_as_string do
+    node() |> Atom.to_string()
   end
 
   defp log_debug(message) do

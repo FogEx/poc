@@ -20,7 +20,16 @@ defmodule FogEx.Telemetry.MetricsCsvExporter do
       |> to_string
   end
 
-  defp map_metric_to_list(metric_name, %{label: label, measurement: measurement, time: time}) do
-    [node(), metric_name, label, measurement, time]
+  defp map_metric_to_list(metric_name, %{
+         node: node,
+         label: label,
+         measurement: measurement,
+         time: time
+       }) do
+    [node, metric_name, label, measurement, dt_to_unix(time)]
+  end
+
+  defp dt_to_unix(time, unit \\ :microsecond) do
+    time |> DateTime.to_unix(:microsecond)
   end
 end
