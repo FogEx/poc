@@ -19,20 +19,36 @@ defmodule FogEx.Modules.Connector.MQTT.Handler do
 
   @impl true
   def handle_cast({:mqtt, :connect}, state) do
-    Logger.debug("Got connect")
+    log_debug("Got connect")
 
     {:noreply, state}
   end
 
   @impl true
   def handle_cast({:mqtt, :disconnect}, state) do
-    Logger.debug("Got disconnect")
+    log_debug("Got disconnect")
 
     {:noreply, state}
   end
 
   @impl true
   def handle_cast({:mqtt, :publish, "vital_signs/" <> _user_id = topic, message}, state) do
+    handle_message(topic, message, state)
+  end
+
+  @impl true
+  def handle_cast({:mqtt, :publish, "body_temperature/" <> _user_id = topic, message}, state) do
+    handle_message(topic, message, state)
+  end
+
+  @impl true
+  def handle_cast({:mqtt, :publish, topic, message}, state) do
+    log_debug("Unhandled message #{inspect(message)} from topic #{inspect(topic)}")
+
+    {:noreply, state}
+  end
+
+  defp handle_message(topic, message, state) do
     start_time = System.monotonic_time()
 
     MqttTelemetry.increment_total()
@@ -50,10 +66,7 @@ defmodule FogEx.Modules.Connector.MQTT.Handler do
     {:noreply, state}
   end
 
-  @impl true
-  def handle_cast({:mqtt, :publish, topic, message}, state) do
-    Logger.debug("Unhandled message #{inspect(message)} from topic #{inspect(topic)}")
-
-    {:noreply, state}
+  defp log_debug(message) do
+    Logger.debug("[#{__MODULE__}] [#{node()}] #{message}")
   end
 end

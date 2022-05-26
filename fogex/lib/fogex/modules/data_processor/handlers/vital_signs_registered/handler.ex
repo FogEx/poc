@@ -1,5 +1,5 @@
 defmodule FogEx.Modules.DataProcessor.VitalSignsRegistered.Handler do
-  use GenServer
+  use FogEx.EventHandler
 
   alias FogEx.Events.VitalSignEvent
   alias FogEx.EventStore
@@ -7,35 +7,6 @@ defmodule FogEx.Modules.DataProcessor.VitalSignsRegistered.Handler do
   alias FogEx.Telemetry.Events, as: EventsTelemetry
 
   require Logger
-
-  def start_link(initial_args) do
-    GenServer.start_link(__MODULE__, initial_args)
-  end
-
-  # Callbacks
-  @impl true
-  def init(%{
-        stream_uuid: stream_uuid,
-        subscription_name: subscription_name,
-        concurrency_limit: concurrency_limit
-      }) do
-    subscription = EventStore.subscribe(stream_uuid, subscription_name, self(), concurrency_limit)
-
-    state = %{
-      subscription: subscription,
-      subscription_name: subscription_name,
-      stream_uuid: stream_uuid
-    }
-
-    {:ok, state}
-  end
-
-  def init(%{}), do: {:stop, :bad_init_args}
-
-  @impl true
-  def handle_info({:subscribed, subscription}, %{subscription: subscription} = state) do
-    {:noreply, state}
-  end
 
   # Event notification
   def handle_info({:events, [event]}, state) do

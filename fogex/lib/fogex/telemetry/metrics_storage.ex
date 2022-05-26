@@ -104,6 +104,6 @@ defmodule FogEx.Telemetry.MetricsStorage do
   end
 
   defp log_debug(message) do
-    Logger.debug("[#{__MODULE__}] #{message}")
+    Logger.debug("[#{__MODULE__}] [#{node()}] #{message}")
   end
 end

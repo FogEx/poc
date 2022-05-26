@@ -1,12 +1,11 @@
 defmodule FogEx.Modules.Connector.MQTT.Supervisor do
   use Supervisor
 
-  @impl true
   def start_link(init_arg) do
     Supervisor.start_link(__MODULE__, init_arg, name: __MODULE__)
   end
 
-  def init(_opts) do
+  def init(_init_arg) do
     mqtt_host = Application.get_env(:fogex, :mqtt_host)
     mqtt_port = Application.get_env(:fogex, :mqtt_port)
 
@@ -20,7 +19,8 @@ defmodule FogEx.Modules.Connector.MQTT.Supervisor do
       ssl_opts: [],
       handler_pid: FogEx.Modules.Connector.MQTT.Handler,
       subscriptions: [
-        {"vital_signs/#", 0}
+        {"vital_signs/#", 0},
+        {"body_temperature/#", 0}
       ]
     ]
 
